@@ -4,11 +4,13 @@ const MAX_HEIGHT = 720;
 const margin = {top: 40, right: 100, bottom: 40, left: 300};
 const NUM_GRAPH_1_ELEMENTS = 10;
 const MAX_ENTRY_LENGTH = 22; // length of Star Wars Battlefront
+const NUM_GRAPH_3_ELEMENTS = 15;
+let padding = 15;
 
 // Assumes the same graph width, height dimensions as the example dashboard. Feel free to change these if you'd like
-let graph_1_width = document.getElementById("graph1").offsetWidth, graph_1_height = 250;
-let graph_2_width = document.getElementById("graph2").offsetWidth, graph_2_height = 600;
-let graph_3_width = MAX_WIDTH / 2, graph_3_height = 575;
+let graph_1_width = document.getElementById("graph1").offsetWidth - padding, graph_1_height = 250;
+let graph_2_width = document.getElementById("graph2").offsetWidth - padding, graph_2_height = 600;
+let graph_3_width = document.getElementById("graph3").offsetWidth - padding, graph_3_height = 575;
 
 // The radius of the pieplot is half the width or half the height (smallest one).
 var radius = graph_2_height / 2 - margin.top - margin.bottom
@@ -38,9 +40,13 @@ data = null;
     return filtered_data.sort(comparator).slice(0, NUM_GRAPH_1_ELEMENTS) // extracts first n elements
 }
 
+function cleanDataGraph3(data, comparator){
+    return [...data.entries()].sort(comparator).slice(0, NUM_GRAPH_3_ELEMENTS)
+}
+
 // 1. Your boss wants to know the top 10 for a specific year.
 function buildGraph1(data){
-    years = getAllYears(data)
+    years = getAllUniqueValues(data, "Year")
     let g1Select = document.getElementById("g1year")
     let yearSelected = "";
     // Append the years to the graph drop down
@@ -50,7 +56,6 @@ function buildGraph1(data){
         yearOption.textContent = `Year: ${year}`;
         yearOption.value = parseInt(year);
         if (graph1Vars && graph1Vars.yearSelected == year){ // select most recent
-            console.log("HERddE")
             yearOption.selected = 'selected'
             yearSelected = year;
         }else if (!graph1Vars && i == years.length - 1){ // select most recent
@@ -260,13 +265,14 @@ function buildGraph2(data){
     .style("text-anchor", "middle")
     .style("font-size", 15)
 
+    // also looked at the TA example for some help with how this would work START
     // Store tooltip in graph2vars, opacity 0 hidden by default
-    let tooltip = d3.select("#graph2")
+    let tooltip = d3.select("body")
     .append("div")
     .attr("class", "tooltip")
     .style("opacity", 0);
 
-    // Tooltip functionality https://www.d3-graph-gallery.com/graph/interactivity_tooltip.html 
+    // Tooltip functionality https://www.d3-graph-gallery.com/graph/interactivity_tooltip.html
     let mouseover = function(d) {
         let percentOfTotal = (d.data.value / graph2Vars.totalSales[graph2Vars.regionSelected] * 100).toFixed(2);
         let html = `<strong>${d.data.key}</strong>
@@ -276,7 +282,7 @@ function buildGraph2(data){
                     ${percentOfTotal}% of total sales`;
         graph2Vars.tooltip.html(html)
             .style("top", `${(d3.event.pageY - 180)}px`) // mouse pos Y
-            .style("left", `${(d3.event.pageX + 50)}px`) // mouse pos X
+            .style("left", `${(d3.event.pageX + 20)}px`) // mouse pos X
             .style("box-shadow", `1px 1px 10px ${graph2Vars.color(d.data.key)}`) // box shadow corresponding to the slice color
             .transition()
             .duration(150)
@@ -291,6 +297,7 @@ function buildGraph2(data){
             .style("opacity", 0);
         d3.select(`#${d.data.key}`).attr('stroke', 'rgb(255, 255, 255)');
     };
+    // also looked at the TA example for some help with how this would work END
 
     graph2Vars = {
         "svg": svg,
@@ -378,42 +385,217 @@ function setGraph2Data(regionSelected){
     legend.exit().remove();
 }
 
-// 3. Lastly, your boss wants to know which publisher to pick based on which genre a game is.
-//  Your chart should provide a clear top publisher for each genre (could be interactive or statically show).
-function buildGraph3(){
-    
+function getAllPublisherDataForGenre(data, genres){
+    // For each game:
+    // access map for {Genre -> {Publisher -> Total}}
+        // for each value in REGIONS
+        // increment value by REGION_SALES
+
+    let genreData = {}
+    for (let i = 0; i < genres.length; i++){
+        genreData[genres[i]] = new Map()
+    }
+
+    // Add data per genre for each game
+    for (let i = 0; i < data.length; i++){
+        let gameData = data[i];
+        let genre = gameData["Genre"];
+        let publisher = gameData["Publisher"]
+        let totalSales = parseFloat(gameData["Global_Sales"]);
+
+        if (!genreData[genre].has(publisher)){ // no data exists yet for this genre & publisher
+            genreData[genre].set(publisher, totalSales);
+        } else{
+            genreData[genre].set(publisher, genreData[genre].get(publisher) + totalSales);
+        }
+    }
+
+    return genreData
 }
 
-// What are all of the options for years that are valid?
-function getAllYears(data){
-    // Get all years in our data
-    years = data.map(game => game.Year);
+// 3. Lastly, your boss wants to know which publisher to pick based on which genre a game is.
+//  Your chart should provide a clear top publisher for each genre (could be interactive or statically show).
+function buildGraph3(data){
+    let genres = getAllUniqueValues(data, "Genre")
+    let genreData = getAllPublisherDataForGenre(data, genres)
 
-    // only unique years; convert back to array for filter + sort
-    let unique_years = Array.from(new Set(years)).sort().reverse()
+    // Select stuff
+    let g3Select = document.getElementById("g3genre")
+    let genreSelected = "";
+    // Append the genres to the graph drop down
+    for (let i = 0; i < genres.length; i++){
+        let genre = genres[i];
+        let genreOption = document.createElement("option")
+        genreOption.textContent = `Genre: ${genre}`;
+        genreOption.value = genre;
+        if (graph3Vars && graph3Vars.genreSelected == genre){ // select most recent
+            genreOption.selected = 'selected'
+            genreSelected = genre;
+        }else if (!graph3Vars && i == genres.length - 1){ // select most recent
+            genreOption.selected = 'selected'
+            genreSelected = genre;
+        }
+        g3Select.appendChild(genreOption);
+    }
+
+    let svg = d3.select("#graph3")
+        .append("svg")
+        .attr("width", graph_3_width)
+        .attr("height", graph_3_height)
+        .append("g")
+        .attr("transform", `translate(${margin.left}, ${margin.top})`);
+    
+    let x = d3.scaleLinear()
+    .range([0, graph_3_width - margin.left - margin.right]);
+
+    // Create a scale band for the y axis (game title)
+    let y = d3.scaleBand()
+            .range([0, graph_3_height - margin.top - margin.bottom])
+            .padding(0.1);  // Improves readability
+
+    // Set up reference to count SVG group
+    let countRef = svg.append("g");
+
+    // Set up reference to y axis label to update text in setData
+    let yAxisLabel = svg.append("g");
+
+    // TODO: Add x-axis label
+    svg.append("text")
+    .attr("transform", `translate(${(graph_3_width - margin.left - margin.right) / 2},
+    ${(graph_3_height - margin.top - margin.bottom) + 20})`)
+    .style("text-anchor", "middle")
+    .text("Global Sales (in Millions)");
+
+    // TODO: Add y-axis label
+    let yAxisText = svg.append("text")
+    .attr("transform", `translate(${-225}, ${(graph_3_height - margin.top - margin.bottom) / 2})`) 
+    .style("text-anchor", "middle")
+    .text("Publisher");
+
+    // TODO: Add chart title
+    let title = svg.append("text")
+    .attr("transform", `translate(${(graph_3_width - margin.left - margin.right) / 2}, ${-10})`)       
+    .style("text-anchor", "middle")
+    .style("font-size", 15)
+
+    // Colors
+    let color = d3.scaleOrdinal()
+                  .range(d3.quantize(
+                      d3.interpolateHcl("#9146FF", "#6441A5"), NUM_GRAPH_3_ELEMENTS));
+
+    graph3Vars = {
+        "svg": svg,
+        "x": x,
+        "y": y,
+        "countRef": countRef,
+        "yAxisLabel": yAxisLabel,
+        "title": title,
+        "color": color,
+        "genreData": genreData,
+        "genres": genres
+    };
+    setGraph3Data(genreSelected)
+    return graph3Vars;
+}
+
+function setGraph3Data(genreSelected){
+    graph3Vars.genreSelected = genreSelected;
+    // TODO: Clean and strip desired amount of data for barplot
+    let dataCleaned = cleanDataGraph3(graph3Vars.genreData[genreSelected], function(a, b){
+        return b[1] - a[1] // base 10, asc order
+    });
+
+    console.log(dataCleaned)
+
+    // TODO: Update the x axis domain with the max count of the provided data
+    graph3Vars.x.domain([0, d3.max(dataCleaned, function(d) { return d[1]; })]);
+    graph3Vars.y.domain(dataCleaned.map(function(d){return d[0]}))
+    graph3Vars.color.domain(dataCleaned.map(function(d){return d[0]}))
+
+    graph3Vars.yAxisLabel.call(d3.axisLeft(graph3Vars.y).tickSize(0).tickPadding(5));
+
+    let bars = graph3Vars.svg.selectAll("rect").data(dataCleaned);
+    bars.enter()
+        .append("rect")
+        .merge(bars)
+        .transition()
+        .duration(1000)
+        .attr("fill", function(d){ return graph3Vars.color(d[0])})
+        .attr("x", graph3Vars.x(0))
+        .attr("y", function(d){ return graph3Vars.y(d[0])})      
+        .attr("width", function(d) { return graph3Vars.x(d[1])})
+        .attr("height",  graph3Vars.y.bandwidth());        // HINT: y.bandwidth() makes a reasonable display height
+        
+    let counts = graph3Vars.countRef.selectAll("text").data(dataCleaned);
+    
+    // TODO: Render the text elements on the DOM
+    counts.enter()
+        .append("text")
+        .merge(counts)
+        .transition()
+        .duration(1000)
+        .attr("x", function(d){
+            return graph3Vars.x(parseFloat(d[1])) + 10
+        })       // HINT: Add a small offset to the right edge of the bar, found by x(d.count)
+        .attr("y", function(d){
+            return graph3Vars.y(d[0]) + 12
+        })       // HINT: Add a small offset to the top edge of the bar, found by y(d.artist)
+        .style("text-anchor", "start")
+        .text(function(d){return d[1].toFixed(2)});           // HINT: Get the count of the artist
+
+    graph3Vars.title.text(`Top 15 Publishers for ${genreSelected} Games`);
+
+    // Remove elements not in use if fewer groups in new dataset
+    bars.exit().remove();
+    counts.exit().remove();
+
+    graph3Vars.bars = bars;
+}
+
+// What are all of the options for some column that are valid?
+function getAllUniqueValues(data, columnName){
+    // Get all values in our data
+    let allValues = data.map(game => game[columnName]);
+
+    // only unique values; convert back to array for filter + sort
+    let uniqueValues = Array.from(new Set(allValues)).sort().reverse()
 
     // Filter out invalid entry
-    unique_years = unique_years.filter(year => year != "N/A");
-    return unique_years
+    uniqueValues = uniqueValues.filter(val => val != "N/A");
+    return uniqueValues
 }
 
 function handleResize(){        
     document.getElementById("graph1").remove()
     document.getElementById("graph2").remove()
+    document.getElementById("graph3").remove()
     document.getElementById("brg1g2").remove()
-    document.getElementById("c1").innerHTML += `<div id="graph1" class="graphbox">
-    <!-- CITATION: Directly from Bootstrap's site -->
-    <select id="g1year" class="form-select form-select-lg mb-3" size=5 aria-label=".form-select-lg example" onchange="setGraph1Data(this.value)">
-    </select>
-    </div>
-    <br id="brg1g2"/>
-    <div id="graph2" class="graphbox">
-        <select id="g2region" class="form-select form-select-lg mb-3" size=5 aria-label=".form-select-lg example" onchange="setGraph2Data(this.value)">
+    document.getElementById("brg2g3").remove()
+    document.getElementById("bottombr").remove()
+    document.getElementById("c1").innerHTML += `
+    <div id="graph1" class="graphbox">
+        <!-- CITATION: Directly from Bootstrap's site -->
+        <select id="g1year" class="form-select form-select-lg mb-3" size=5 aria-label=".form-select-lg example" onchange="setGraph1Data(this.value)">
         </select>
+        </div>
+        <br id="brg1g2"/>
+        <div id="graph2" class="graphbox">
+            <select id="g2region" class="form-select form-select-lg mb-3" size=5 aria-label=".form-select-lg example" onchange="setGraph2Data(this.value)">
+            </select>
+        </div>
+        <br id="brg2g3"/>
     </div>
     `
-    graph_1_width = document.getElementById("graph1").offsetWidth, graph_1_height = 250;
-    graph_2_width = document.getElementById("graph2").offsetWidth, graph_2_height = 600;
+    document.getElementById("c2").innerHTML += `
+        <div id="graph3" class="graphbox">
+            <select id="g3genre" class="form-select form-select-lg mb-3" size=5 aria-label=".form-select-lg example" onchange="setGraph3Data(this.value)">
+            </select>
+        </div>
+        <br id="bottombr">
+    `
+    graph_1_width = document.getElementById("graph1").offsetWidth - padding, graph_1_height = 250;
+    graph_2_width = document.getElementById("graph2").offsetWidth - padding, graph_2_height = 600;
+    graph_3_width = document.getElementById("graph3").offsetWidth - padding, graph_3_height = 575;
     loadAllData(data)
 }
 window.addEventListener("resize", handleResize)
@@ -425,7 +607,5 @@ function loadAllData(d){
     data = d;
     graph1Vars = buildGraph1(data)
     graph2Vars = buildGraph2(data)
-    //setGraph1Data()
-    graph3Vars = buildGraph3()
-    //setGraph1Data()
+    graph3Vars = buildGraph3(data)
 }

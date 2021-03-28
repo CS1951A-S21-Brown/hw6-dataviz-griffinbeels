@@ -15,21 +15,28 @@
         <h3>Assignment 6 &laquo; Data Visualization Dashboard &raquo;</h3>
     </div>
     <!--  We included a basic HTML structure for the 3 graphs here. Feel free to change this if you'd like  -->
-    <div class="row">
-        <div id = "c1" class="col-lg-6 col-md-offset-3">
-            <div id="graph1" class="graphbox">
-                <!-- CITATION: Directly from Bootstrap's site -->
-                <select id="g1year" class="form-select form-select-lg mb-3" size=5 aria-label=".form-select-lg example" onchange="setGraph1Data(this.value)">
-                </select>
+    <div class="outercontainer">
+        <div class="row">
+            <div id = "c1" class="col-lg-6">
+                <div id="graph1" class="graphbox">
+                    <!-- CITATION: Directly from Bootstrap's site -->
+                    <select id="g1year" class="form-select form-select-lg mb-3" size=5 aria-label=".form-select-lg example" onchange="setGraph1Data(this.value)">
+                    </select>
+                </div>
+                <br id="brg1g2"/>
+                <div id="graph2" class="graphbox">
+                    <select id="g2region" class="form-select form-select-lg mb-3" size=5 aria-label=".form-select-lg example" onchange="setGraph2Data(this.value)">
+                    </select>
+                </div>
+                <br id="brg2g3"/>
             </div>
-            <br id="brg1g2"/>
-            <div id="graph2" class="graphbox">
-                <select id="g2region" class="form-select form-select-lg mb-3" size=5 aria-label=".form-select-lg example" onchange="setGraph2Data(this.value)">
-                </select>
+            <div id = "c2" class="col-lg-6">
+                <div id="graph3" class="graphbox">
+                    <select id="g3genre" class="form-select form-select-lg mb-3" size=5 aria-label=".form-select-lg example" onchange="setGraph3Data(this.value)">
+                    </select>
+                </div>
+                <br id="bottombr">
             </div>
-        </div>
-        <div class="col-lg-6">
-            <div id="graph3" class="graphbox"></div>
         </div>
     </div>
     <!--Feel free to add more JavaScript files as needed-->

@@ -1,3 +1,6 @@
+.outercontainer{
+    padding: 15px;
+}
 .header {
     padding-bottom: 20px;
     margin-bottom: 20px;
@@ -24,7 +27,7 @@
     background-color: #f0f0f0;
     text-align: center;
     padding: 9px;
-    min-width: 125px;
+    min-width: 150px;
     border-radius: 2px;
     font-size: 15px;
 }
