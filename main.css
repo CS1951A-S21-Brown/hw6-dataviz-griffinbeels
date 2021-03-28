@@ -5,8 +5,32 @@
 
 .header > h3, h5 {
     margin: 0;
-    padding-top: 20px;
+    padding-top: 25px;
     text-align: center;
 }
 
 /* Include any custom CSS styling here! */
+
+.header {
+    box-shadow: 0px 2px 4px #000;
+}
+
+.graphbox {
+    box-shadow: 0px 2px 4px #000;
+}
+.tooltip {
+    position: absolute;
+    font-size: 13px;
+    background-color: #f0f0f0;
+    text-align: center;
+    padding: 9px;
+    min-width: 125px;
+    border-radius: 2px;
+    font-size: 15px;
+}
+
+@media (min-width: 768px) {
+    .tooltip {
+        font-size: 15px;
+    }
+  }
