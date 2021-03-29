@@ -48,7 +48,7 @@
             </div>
         </div>
 
-        <div class="row">
+        <div class="row align-items-center">
             <div class="col-md-4">
                 <div class="answerbox">
                     <p>
@@ -108,12 +108,32 @@
 
         <br>
 
-        <div class="row">
-            <div class="answerbox">
-                <p>
-                    <strong>Evaluate the accessibility of your dashboard based on the readings (<a href="https://medium.com/nightingale/accessibility-is-at-the-heart-of-data-visualization-64a38d6c505b" target="_blank">1</a>, <a href="https://www.betterment.com/resources/accessible-data-visualization/" target="_blank">2</a>) in the “Before you begin” section. What kinds of users might find this dashboard accessible and who might have more difficulty? What additional actions might you take to make this dashboard more accessible to all audiences? Your response should refer to at least one of the readings and be about 1 paragraph.</strong>
-                </p>
-
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <div class="answerbox">
+                    <p>
+                        <strong>Evaluate the accessibility of your dashboard based on the readings (<a href="https://medium.com/nightingale/accessibility-is-at-the-heart-of-data-visualization-64a38d6c505b" target="_blank">1</a>, <a href="https://www.betterment.com/resources/accessible-data-visualization/" target="_blank">2</a>) in the “Before you begin” section. What kinds of users might find this dashboard accessible and who might have more difficulty? What additional actions might you take to make this dashboard more accessible to all audiences? Your response should refer to at least one of the readings and be about 1 paragraph.</strong>
+                    </p>
+                    This reading was absolutely fascinating for better understanding our data readers. In particular, the first article says "It just so happens that this visual mapping doesn’t work for people who can’t see" in reference to a line graph.
+                    This made me realize that users who are blind may have immense difficulty using my dashboard. A solution to this would be to include aria-labels so that each data entry in each of the graphs can be screen read, for example.
+                    A different solution would be to "make those trends and relationships explicit to people who need it" -- for example, we don't need to screen read EVERY thing (unless they want that), instead we can also provide options like just asking for the max, or min, or highlighting trends, etc.
+                    My graphs are very accessible for users without any disabilities, including those that are colorblind (as I tried to choose colors that weren't difficult to parse for individuals with colorblindness).
+                    Overall, adding screen reading options and labels for HTML elements, as well as more descriptions that explain the trends / data without needing to see it.
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="answerbox">
+                    <p>
+                        <strong>Reflect on the stages of your design and implementation process when you could have taken steps to make your dashboard more accessible to all audiences. What are some factors that kept you from taking these steps? (a few sentences)</strong>
+                    </p>
+                    Naturally, and I think this will be the case for most other students, the biggest factor preventing me from implementing accessibility is that (1) I wasn't graded on it, and (2) I didn't have enough time.
+                    Unfortunately, with academic assignments, unless something is explicitly asked for, there's virtually no reason to do it; therefore, accessibility options sadly came second to completing the assignment.
+                    In a real world, customer facing scenario, this is also all too common -- if you have a deadline from your boss, and you need to finish your code, you're probably going to prioritize meeting the deadline 
+                    over adding accessibility options (unless you're at Amazon, in which we'll just move the release back a bit to make sure the product is as customer-centric as we can get it).
+                    During the implementation process, when I was building each graph (see buildGraph1(), buildGraph2(), buildGraph3()), these would be good opportunities to make sure that I've thought extensively about the dashboard's accessibility.
+                    In particular, when deciding on colors, it would be a perfect time to think about individuals with color blindness; when thinking about labels, it would be important to think about blind users who need to use screen readers.
+                    Each feature has a different set of issues that comes along with it, so evaluating as we tackle each one could be a good approach.
+                </div>
             </div>
         </div>
     </div>
