@@ -10,7 +10,7 @@ let padding = 15;
 // Assumes the same graph width, height dimensions as the example dashboard. Feel free to change these if you'd like
 let graph_1_width = document.getElementById("graph1").offsetWidth - padding, graph_1_height = 250;
 let graph_2_width = document.getElementById("graph2").offsetWidth - padding, graph_2_height = 600;
-let graph_3_width = document.getElementById("graph3").offsetWidth - padding, graph_3_height = 575;
+let graph_3_width = document.getElementById("graph3").offsetWidth - padding, graph_3_height = 600;
 
 // The radius of the pieplot is half the width or half the height (smallest one).
 var radius = graph_2_height / 2 - margin.top - margin.bottom
@@ -270,6 +270,7 @@ function buildGraph2(data){
     let tooltip = d3.select("body")
     .append("div")
     .attr("class", "tooltip")
+    .attr("id", "tooltip")
     .style("opacity", 0);
 
     // Tooltip functionality https://www.d3-graph-gallery.com/graph/interactivity_tooltip.html
@@ -538,7 +539,7 @@ function setGraph3Data(genreSelected){
             return graph3Vars.x(parseFloat(d[1])) + 10
         })       // HINT: Add a small offset to the right edge of the bar, found by x(d.count)
         .attr("y", function(d){
-            return graph3Vars.y(d[0]) + 12
+            return graph3Vars.y(d[0]) + 22
         })       // HINT: Add a small offset to the top edge of the bar, found by y(d.artist)
         .style("text-anchor", "start")
         .text(function(d){return d[1].toFixed(2)});           // HINT: Get the count of the artist
@@ -572,6 +573,7 @@ function handleResize(){
     document.getElementById("brg1g2").remove()
     document.getElementById("brg2g3").remove()
     document.getElementById("bottombr").remove()
+    document.getElementById("tooltip").remove()
     document.getElementById("c1").innerHTML += `
     <div id="graph1" class="graphbox">
         <!-- CITATION: Directly from Bootstrap's site -->
@@ -595,7 +597,7 @@ function handleResize(){
     `
     graph_1_width = document.getElementById("graph1").offsetWidth - padding, graph_1_height = 250;
     graph_2_width = document.getElementById("graph2").offsetWidth - padding, graph_2_height = 600;
-    graph_3_width = document.getElementById("graph3").offsetWidth - padding, graph_3_height = 575;
+    graph_3_width = document.getElementById("graph3").offsetWidth - padding, graph_3_height = 600;
     loadAllData(data)
 }
 window.addEventListener("resize", handleResize)

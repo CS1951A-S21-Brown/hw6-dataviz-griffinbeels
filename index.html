@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <title>Assignment 6 &laquo; Data Visualization Dashboard&raquo;</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+        <!-- <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css"> -->
         <link rel="stylesheet" href="main.css"/>
         <!--Feel free to add more CSS files as needed-->
         <script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
@@ -16,15 +16,21 @@
     </div>
     <!--  We included a basic HTML structure for the 3 graphs here. Feel free to change this if you'd like  -->
     <div class="outercontainer">
-        <div class="row">
+        <div class="row align-items-center">
             <div id = "c1" class="col-lg-6">
                 <div id="graph1" class="graphbox">
+                    <div class="questionbox">
+                        <strong>Question: Your boss wants to know the top 10 video games of all time or top 10 for a specific year.</strong>
+                    </div>
                     <!-- CITATION: Directly from Bootstrap's site -->
                     <select id="g1year" class="form-select form-select-lg mb-3" size=5 aria-label=".form-select-lg example" onchange="setGraph1Data(this.value)">
                     </select>
                 </div>
                 <br id="brg1g2"/>
                 <div id="graph2" class="graphbox">
+                    <div class="questionbox">
+                        <strong>Question: Your boss wants to understand which genre is most popular. We'd like to see genre sales broken out per region.</strong>
+                    </div>
                     <select id="g2region" class="form-select form-select-lg mb-3" size=5 aria-label=".form-select-lg example" onchange="setGraph2Data(this.value)">
                     </select>
                 </div>
@@ -32,11 +38,75 @@
             </div>
             <div id = "c2" class="col-lg-6">
                 <div id="graph3" class="graphbox">
+                    <div class="questionbox">
+                        <strong>Question: Lastly, your boss wants to know which publisher to pick based on which genre a game is.</strong>
+                    </div>
                     <select id="g3genre" class="form-select form-select-lg mb-3" size=5 aria-label=".form-select-lg example" onchange="setGraph3Data(this.value)">
                     </select>
                 </div>
                 <br id="bottombr">
             </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="answerbox">
+                    <p>
+                        <strong>Describe how your dashboard answers the questions presented. You don't have to address every question directly, but should at a high level address the main questions. (10 points)</strong>
+                    </p>
+                    Overall, my graphs tackle each question very simply. For the first question, I allow the user to select a specific year, and dynamically load the top games for that year. Checking that chart answers the first question.
+                    For the second question, I allow the user to select a region, and then a piechart is generated; this piechart very simply demonstrates
+                    the share of each genre for each region. You can also hover over each slice to get more information.
+                    For the third question, I allow the user to select a genre, and then a bar graph is generated representing the top publishers for that genre across all entries.
+                    As such, I believe that my boss would be quite happy -- all the info is there, and it's easy to understand!
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="answerbox">
+                    <p>
+                        <strong>List 3 reasons why D3 was helpful and improved your visualization (6 points)</strong>
+                    </p>
+                    <ol>
+                        <li><strong>Speed of implementation.</strong> Instead of reinventing the wheel, you can just reuse the existing tools for making a wheel.
+                            As such, for each of the bar chart and pie chart implementations, I simply looked at documentation for D3, and was able to 
+                            easily make a version of each that satisfied my needs. This improved visualization because we can use the best version of existing tools easily.
+                        </li>
+                        <li><strong>Animations.</strong> D3 has nifty tools (namely .transition() and .duration()) for animation between versions of graphs.
+                            This was particularly useful when dynamically adjusting between options in each graph; for instance, change the region for the piechart, and you'll
+                            find that the piechart animates the transition between datasets!
+                         </li>
+                        <li><strong>Flexibility.</strong> We clearly had different usecases, and different data input for each of the questions above.
+                            However, D3 allowed us to use the same framework to answer very different questions. There was no strict format that our
+                            data HAD to follow, and using different data was fairly easy. This allowed for the questions to be answered easily and more specifically!
+                        </li>
+                    </ol>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="answerbox">
+                    <p>
+                        <strong>List 3 reasons why D3 would not be the best tool for creating a visualization (6 points)</strong>
+                    </p>
+                    <ol>
+                        <li><strong>Javascript itself isn't the right choice.</strong> If a tool needs to be written in some non-Javascript language, then using D3 becomes quite difficult.
+                            There are indeed ways to use D3 in Python, for example, but it becomes a bit more of a hassle.
+                            As such, I think if not using Javascript, I'd find a different library.
+                        </li>
+                        <li><strong>The company you work for doesn't use D3.</strong> Yes, it would be great if you could choose the exact library and framework to use for everything you 
+                            work on ever. But the reality is that if you work at a big company, odds are there will be standards and decisions made before you ever get there.
+                            So, if they decided to not use D3 (or tried data viz before D3 existed), then you're out of luck -- it's not the best tool, because there's no way it is
+                            reasonable to reimplement all of your company's data visualizations just to have D3.
+                         </li>
+                        <li><strong>Javascript is disabled on the site.</strong> If you know that Javascript is going to be disabled on your site (for whatever reason, perhaps security reasons, who knows),
+                            then it would be impossible to use D3. Or, if you can't load external CDNs, then you can't load the library into memory. Either way, basically, if there's a scenario
+                            where restrictions are placed on your vanilla html/css project, then this would NOT be a time to add a depedency like D3.
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            
         </div>
     </div>
     <!--Feel free to add more JavaScript files as needed-->

@@ -21,6 +21,18 @@
 .graphbox {
     box-shadow: 0px 2px 4px #000;
 }
+
+.answerbox{
+    box-shadow: 0px 2px 4px #000;
+    padding: 10px;
+    min-height: 200px;
+}
+
+.questionbox{
+    padding: 10px;
+    text-align: center;
+}
+
 .tooltip {
     position: absolute;
     font-size: 13px;
